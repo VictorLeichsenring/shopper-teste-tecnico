@@ -32,7 +32,7 @@ module.exports = {
       },
       value: {
         allowNull: false,
-        type: Sequelize.DOUBLE
+        type: Sequelize.DOUBLE(10, 2)
       },
       kmMin: {
         allowNull: false,
