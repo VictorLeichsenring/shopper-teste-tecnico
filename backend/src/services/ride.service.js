@@ -1,3 +1,4 @@
+const { Driver } = require('../models');
 const axios = require('axios');
 
 const URL = 'https://routes.googleapis.com/directions/v2:computeRoutes';
@@ -7,9 +8,9 @@ if (!GOOGLE_API_KEY) {
   throw new Error('Chave API não definida ou não localizada');
 }
 
-const findRoute = async (originAddress, destinyAddress) => {
+const estimate = async (originAddress, destinyAddress) => {
+  
   try {
-    
     const body = {
       origin: {
         address: originAddress,
@@ -32,9 +33,7 @@ const findRoute = async (originAddress, destinyAddress) => {
     const headers = {
       'Content-Type': 'application/json',
       'x-Goog-Api-Key': GOOGLE_API_KEY,
-      // 'X-Goog-FieldMask': 'routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline,routes.legs.startLocation,routes.legs.endLocation',
       'X-Goog-FieldMask':'routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline,routes.legs.startLocation,routes.legs.endLocation'
-      // 'X-Goog-FieldMask':'routes.distanceMeters,routes.duration,routes.legs.startLocation.latLng,routes.legs.endLocation.latLng,routes.polyline.encodedPolyline'
     };
 
     const response = await axios.post(URL, body, { headers });
@@ -44,20 +43,40 @@ const findRoute = async (originAddress, destinyAddress) => {
     }
 
     const route = response.data.routes[0];
-
     const leg = route.legs[0];
-
-    const distance = route.distanceMeters / 1000; 
-    const duration = route.duration;
 
     const origin = {
       latitude: leg.startLocation.latLng.latitude,
       longitude: leg.startLocation.latLng.longitude,
     };
+
     const destination = {
       latitude: leg.endLocation.latLng.latitude,
       longitude: leg.endLocation.latLng.longitude,
     };
+
+    const distance = route.distanceMeters / 1000;
+    const duration = route.duration;
+
+    const drivers = await Driver.findAll();
+
+    
+    const filteredDrivers = drivers
+      .filter((driver) => driver.kmMin <= distance)
+      .map((driver) => ({
+        id: driver.id,
+        name: driver.name,
+        description: driver.description,
+        vehicle: driver.vehicle,
+        review: {
+          rating: driver.rating,
+          comment: driver.comment,
+        },
+        value: parseFloat((distance * driver.value).toFixed(2)), // Custo total arredondado
+      }));
+
+    
+    const sortedDrivers = filteredDrivers.sort((a, b) => a.value - b.value);
 
     return {
       status: 'SUCCESSFUL',
@@ -66,6 +85,8 @@ const findRoute = async (originAddress, destinyAddress) => {
         destination,
         distance,
         duration,
+        options: sortedDrivers,
+        routeResponse: route,
       },
     };
   } catch (error) {
@@ -77,4 +98,6 @@ const findRoute = async (originAddress, destinyAddress) => {
   }
 };
 
-module.exports = { findRoute };
+module.exports = {
+  estimate,
+};
