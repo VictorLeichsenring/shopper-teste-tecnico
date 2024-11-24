@@ -6,17 +6,7 @@ const estimate = async (req, res) => {
 
   
   try {
-    if (!origin || !destination) {
-      return res.status(mapStatusHTTP('BAD_REQUEST')).json({
-        error: 'Origin and destination are required.',
-      });
-    }
-    
-
     const result = await RideServices.estimate(origin, destination);
-
-    
-    
 
     if (result.status === 'FAILED') {
       return res.status(mapStatusHTTP('FAILED')).json({ error: result.error });
