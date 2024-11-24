@@ -1,4 +1,6 @@
 const { Driver } = require('../models');
+const {Ride} = require('../models');
+
 const axios = require('axios');
 
 const URL = 'https://routes.googleapis.com/directions/v2:computeRoutes';
@@ -98,6 +100,14 @@ const estimate = async (originAddress, destinyAddress) => {
   }
 };
 
+
+
+const getAllRides = async () => {
+  const rides = await Ride.findAll();
+  return{ status: 'SUCCESSFUL', data: rides};
+}
+
 module.exports = {
   estimate,
+  getAllRides
 };

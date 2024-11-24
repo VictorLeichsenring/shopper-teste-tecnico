@@ -21,4 +21,9 @@ const estimate = async (req, res) => {
   }
 }
 
-module.exports = { estimate };
+const getAllRides = async (req, res) => {
+  const {status, data} = await RideServices.getAllRides();
+  return res.status(mapStatusHTTP(status)).json(data)
+}
+
+module.exports = { estimate, getAllRides };
