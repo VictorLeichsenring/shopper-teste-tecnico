@@ -1,5 +1,5 @@
-const { Driver } = require('../models');
-const {Ride} = require('../models');
+const { Driver, Ride } = require('../models');
+
 
 const axios = require('axios');
 
@@ -107,7 +107,39 @@ const getAllRides = async () => {
   return{ status: 'SUCCESSFUL', data: rides};
 }
 
+
+const insertRide = async (object) => {
+  try {
+    const {
+      customer_id,
+      origin,
+      destination,
+      distance,
+      duration,
+      driver,
+      value,
+    } = object;
+
+    const ride = await Ride.create({
+      idCustomer: customer_id, // Corrigido para corresponder ao modelo
+      date: new Date(), // Preenche automaticamente a data com o timestamp atual
+      origin,
+      destination,
+      distance,
+      duration,
+      idDriver: driver.id, // Corrigido para corresponder ao modelo
+      value,
+    });
+
+    return { status: 'SUCCESSFUL', data: ride };
+  } catch (error) {
+    console.error('Error inserting ride:', error.message);
+    return { status: 'FAILED', error: error.message };
+  }
+};
+
 module.exports = {
   estimate,
-  getAllRides
+  getAllRides,
+  insertRide
 };
