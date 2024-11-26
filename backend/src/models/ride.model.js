@@ -1,3 +1,5 @@
+const { underscoredIf } = require("sequelize/lib/utils");
+
 const RideModel = (sequelize, DataTypes) => {
   const Ride = sequelize.define(
     'Ride',
@@ -58,10 +60,17 @@ const RideModel = (sequelize, DataTypes) => {
     {
       tableName: 'Rides', 
       timestamps: true,
+      underscored: true,
     }
   );
 
+  Ride.associate = (models) => {
+    Ride.belongsTo(models.Driver, {
+      foreignKey: 'idDriver',
+      as: 'Driver',
+    });
+  }
+
   return Ride;
 };
-
 module.exports = RideModel;

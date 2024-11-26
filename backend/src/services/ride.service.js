@@ -138,8 +138,50 @@ const insertRide = async (object) => {
   }
 };
 
+const getByCustomerId = async (customer_id, driver_id) => {
+  const rides = await Ride.findAll({
+    where: { customer_id },
+    include: [
+      {
+        model: Driver,
+        as: 'Driver',
+        attributes: ['id', 'name'],
+        ...(driver_id && { where: { id: driver_id } }),
+      },
+    ],
+  });
+
+  const ridesSorted = rides.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+
+  const formattedRides = ridesSorted.map((ride) => ({
+    id: ride.id,
+    date: ride.date,
+    origin: ride.origin,
+    destination: ride.destination,
+    distance: ride.distance,
+    duration: ride.duration,
+    driver: ride.Driver
+      ? {
+          id: ride.Driver.id,
+          name: ride.Driver.name,
+        }
+      : null,
+    value: ride.value,
+  }));
+
+  return {
+    status: 'SUCCESSFUL',
+    data: {
+      customer_id: String(customer_id),
+      rides: formattedRides,
+    },
+  };
+};
+
 module.exports = {
   estimate,
   getAllRides,
-  insertRide
+  insertRide,
+  getByCustomerId
 };

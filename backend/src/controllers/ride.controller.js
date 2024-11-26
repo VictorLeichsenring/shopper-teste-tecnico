@@ -50,5 +50,17 @@ const confirmRide = async (req, res) => {
   
 };
 
+const getByCustomerId = async (req, res) => {
+  const { customer_id, driver_id } = req.params;
+  
+  if (driver_id) {
+    const rides = await RideServices.getByCustomerId(customer_id, driver_id);
+    return res.status(mapStatusHTTP(rides.status)).json(rides.data);
+  }
+  const rides = await RideServices.getByCustomerId(customer_id);
 
-module.exports = { estimate, getAllRides, confirmRide };
+  return res.status(mapStatusHTTP(rides.status)).json(rides.data);
+};
+
+
+module.exports = { estimate, getAllRides, confirmRide, getByCustomerId };

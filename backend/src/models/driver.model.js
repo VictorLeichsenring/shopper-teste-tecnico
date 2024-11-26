@@ -49,8 +49,16 @@ const DriverModel = (sequelize, DataTypes) => {
     {
       tableName: 'Drivers', 
       timestamps: true,
+      underscored: true,
     }
   );
+
+  Driver.associate = (models) => {
+    Driver.hasMany(models.Ride, {
+      foreignKey: 'idDriver',
+      as: 'Rides',
+    });
+  };
 
   return Driver;
 };

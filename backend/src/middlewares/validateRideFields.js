@@ -1,4 +1,5 @@
 const checkRequiredFields = require('../utils/checkRequiredFields');
+const {Driver, Ride} = require('../models');
 
 const validadeRideFields = (req, res, next) => {
   
@@ -23,4 +24,37 @@ const validadeRideConfirm = (req, res, next) => {
   next();
 }
 
-module.exports = {validadeRideFields, validadeRideConfirm};
+const validadeRideByCustomerId = async (req, res, next) => {
+  const { customer_id, driver_id } = req.params;
+  
+  
+  if (!customer_id|| customer_id.trim() === '') {
+    return res.status(400).json({
+      error_code: 'INVALID_DATA',
+      error_description: 'Os dados fornecidos na URL da requisição são inválidos: customer_id não foi informado.',
+    });
+  }
+
+  if (driver_id) {
+    const driver = await Driver.findByPk(driver_id);
+    if (!driver) {
+      return res.status(404).json({
+        error_code: "INVALID_DRIVER",
+        error_description: 'Motorista inválido.',
+      });
+    }
+  }
+
+  const rides = await Ride.findAll({
+    where: {customer_id},
+  });
+  if (!rides || rides.length === 0) {
+    return res.status(404).json({
+      error_code: 'NO_RIDES_FOUND',
+      error_description: `Nenhuma corrida encontrada para o customer_id: ${customer_id}.`,
+    });
+  }
+  next();
+}
+
+module.exports = {validadeRideFields, validadeRideConfirm, validadeRideByCustomerId};
