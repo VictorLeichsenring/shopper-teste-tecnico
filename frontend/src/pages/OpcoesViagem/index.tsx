@@ -4,6 +4,17 @@ import EstimateRideContext from "../../context/EstimateRideContext";
 function OpcoesViagem() {
   const {estimateRide, confirmRideApi, error, loading} = useContext(EstimateRideContext);
 
+  const googleApiKey = import.meta.env.VITE_REACT_APP_GOOGLE_API_KEY;
+
+ 
+
+  // const googleMapsUrl = `https://maps.googleapis.com/maps/api/staticmap?size=600x400&path=enc:${estimateRide?.routeResponse.polyline.encodedPolyline}&markers=color:blue%7Clabel:A%7C${estimateRide?.origin.latitude},${estimateRide?.origin.longitude}&markers=color:red%7Clabel:B%7C${estimateRide?.destination.latitude},${estimateRide?.destination.longitude}&key=${googleApiKey}`;
+
+  const googleMapsUrl = `https://maps.googleapis.com/maps/api/staticmap?size=600x400&markers=color:red|label:A|${estimateRide?.origin.latitude},${estimateRide?.origin.longitude}&markers=color:green|label:B|${estimateRide?.destination.latitude},${estimateRide?.destination.longitude}&path=color:blue|weight:5|${estimateRide?.origin.latitude},${estimateRide?.origin.longitude}|${estimateRide?.destination.latitude},${estimateRide?.destination.longitude}&key=${googleApiKey}`;
+
+console.log("URL do Mapa:", googleMapsUrl);
+
+
   if (!estimateRide) {
     return <p>Carregando informações de estimativa...</p>;
   }
@@ -15,10 +26,11 @@ function OpcoesViagem() {
     {loading && <p>Carregando...</p>}
     <div id="mapa">
       <h3>Mapa da Rota</h3>
-      {/* <img
-        src={`https://maps.googleapis.com/maps/api/staticmap?size=600x400&path=enc:${estimateRide.routeResponse}&key=${process.env.REACT_APP_GOOGLE_API_KEY}`}
-        alt="Mapa da Rota"
-      /> */}
+      <img
+          src={googleMapsUrl}
+          alt="Mapa da Rota"
+          style={{ width: "100%", maxWidth: "600px", height: "auto" }}
+        />
     </div>
 
     <div id="opcoes">

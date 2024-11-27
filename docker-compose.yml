@@ -7,7 +7,7 @@ services:
     ports:
       - 3000:3000
     environment:
-      - REACT_APP_GOOGLE_API_KEY=${GOOGLE_API_KEY}  # Passa a variável do .env para o frontend
+      - VITE_REACT_APP_GOOGLE_API_KEY=${GOOGLE_API_KEY}
       - REACT_APP_BACKEND_URL=http://localhost:8080  # URL do backend para o frontend
     env_file:
       - .env  # Carrega o .env da raiz

@@ -1,13 +1,13 @@
 export type DriverType = {
   id: number,
   name: string,
-  description?: string,
-  vehicle?: string,
-  review?: {
+  description: string,
+  vehicle: string,
+  review: {
     rating: number,
     comment: string,
   }
-  value?: number,
+  value: number,
   kmMin?: number,
   createdAt?: string,
   updatedAt?: string,

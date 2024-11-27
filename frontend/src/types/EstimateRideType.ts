@@ -12,5 +12,9 @@ export type EstimateRideType = {
   distance: number,
   duration: string,
   options: DriverType[],
-  routeResponse: object,
+  routeResponse: {
+    polyline:{
+      encodedPolyline: string
+    },
+  },
 }
