@@ -1,56 +1,69 @@
 import { useContext, useEffect, useState } from "react";
 import EstimateRideContext from "../../context/EstimateRideContext";
+import RideCard from "../../components/RideCard";
+import './index.css'
 
 function HistoricoViagem() {
-  const [userId, setUserId] = useState<number>(0);
+  const [userId, setUserId] = useState<number>(1);            
   const [driverId, setDriverId] = useState<number | null>(null);
 
-  const { 
+  const {
     ridesByCustomer,
     fetchRidesByCustomerApi,
     error,
     loading,
     getDrivers,
     drivers
-   } =
-    useContext(EstimateRideContext);
+  } = useContext(EstimateRideContext);
 
-    useEffect(() => {
-      getDrivers();
-    }, [getDrivers]);
+  useEffect(() => {
+    getDrivers();
+  }, [getDrivers]);
 
   const handleFilter = async () => {
     if (!userId) {
       alert("Por favor, informe o ID do usuário.");
       return;
     }
-
     
-    await fetchRidesByCustomerApi(userId.toString(), driverId?.toString());
+    await fetchRidesByCustomerApi(
+      userId.toString(),
+      driverId !== null && driverId !== 0 ? driverId.toString() : undefined // Envia undefined ao invés de null
+    );
+  };
+
+  const handleUserIdChange = (value: string) => {
+    const numericValue = Number(value);
+    if (numericValue < 1) {
+      setUserId(1); // Define o valor como 1 se for menor
+    } else {
+      setUserId(numericValue);
+    }
   };
 
   return (
     <div className="historico-viagens-container">
       <h2>Histórico de Viagens</h2>
 
-      <div>
+      <div className="filter-container">
         <label htmlFor="userId">ID do Usuário:</label>
         <input
           type="number"
           id="userId"
           value={userId}
-          onChange={(e) => setUserId(Number(e.target.value))} 
+          min={1}
+          onChange={(e) => handleUserIdChange(e.target.value)}
         />
       </div>
 
-      <div>
+      <div className="filter-container">
         <label htmlFor="driverId">Selecione o Motorista:</label>
         <select
           id="driverId"
           value={driverId ?? ""}
           onChange={(e) =>
-            setDriverId(e.target.value === "all" ? null : Number(e.target.value))
-          } // Atualiza o estado com null ou número
+            setDriverId(e.target.value === "" ? null : Number(e.target.value))
+          }
         >
           <option value="">Todos</option>
           {drivers.map((driver) => (
@@ -73,15 +86,7 @@ function HistoricoViagem() {
         )}
 
         {ridesByCustomer?.rides.map((ride) => (
-          <div key={ride.id} className="ride-item">
-            <p>Data e Hora: {new Date(ride.date).toLocaleString()}</p>
-            <p>Motorista: {ride.driver.name}</p>
-            <p>Origem: {ride.origin}</p>
-            <p>Destino: {ride.destination}</p>
-            <p>Distância: {ride.distance} km</p>
-            <p>Duração: {ride.duration}</p>
-            <p>Valor: R$ {ride.value.toFixed(2)}</p>
-          </div>
+          <RideCard key={ride.id} ride={ride} /> // Use RideCard para renderizar as viagens
         ))}
       </div>
     </div>

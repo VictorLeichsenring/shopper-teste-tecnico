@@ -82,16 +82,19 @@ function EstimateRideProvider({ children }: {children: React.ReactNode}) {
   )
 
   const fetchRidesByCustomerApi = useCallback(
-    async (customerId: string, driverId: string | null = null) => {
+    async (customerId: string, driverId: string | undefined = undefined) => {
       setLoading(true);
       setError(null);
-
+  
       try {
         const endpoint = driverId
-          ? `/ride/${customerId}/${driverId}`
-          : `/ride/${customerId}`;
+        ? `/ride/${customerId}/${driverId}` // Filtra por driverId
+        : `/ride/${customerId}`; // Sem driverId (todos)
+
+      console.log("Endpoint being chamado:", endpoint);
+  
         const response = await shopperApi("GET", endpoint);
-        setRidesByCustomer(response.data); 
+        setRidesByCustomer(response.data);
       } catch (err) {
         console.error("Erro ao carregar histórico de viagens:", err);
         setError("Erro ao carregar histórico de viagens. Tente novamente.");
@@ -101,6 +104,7 @@ function EstimateRideProvider({ children }: {children: React.ReactNode}) {
     },
     []
   );
+  
 
   const getDrivers = useCallback(async () => {
     try {

@@ -1,0 +1,47 @@
+.ride-card {
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin: 10px;
+  width: 100%;
+  max-width: 400px;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.ride-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.ride-card-header {
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ride-card-header h3 {
+  font-size: 1.2em;
+  color: #333;
+  margin: 0;
+}
+
+.ride-card-header p {
+  font-size: 0.9em;
+  color: #666;
+  margin: 0;
+}
+
+.ride-card-details p {
+  font-size: 0.95em;
+  color: #444;
+  margin: 8px 0;
+}
+
+.ride-card-details strong {
+  color: #000;
+}
