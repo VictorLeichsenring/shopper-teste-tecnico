@@ -6,6 +6,9 @@ import EstimateRideContext from "./EstimateRideContext";
 
 function EstimateRideProvider({ children }: {children: React.ReactNode}) {
   const[estimateRide, setEstimateRide] = useState<EstimateRideType | null>(null);
+  const [customerId, setCustomerId] = useState<string>('');
+  const [originAddress, setOriginAddress] = useState<string>('');
+  const [destinationAddress, setDestinationAddress] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -23,6 +26,9 @@ function EstimateRideProvider({ children }: {children: React.ReactNode}) {
           destination});
         const data: EstimateRideType = response.data;
         setEstimateRide(data);
+        setCustomerId(customerId);
+        setOriginAddress(origin);
+        setDestinationAddress(destination);
         navigate('opcoes');
       } catch (error) {
         console.error("Erro ao solicitar estimativa de viagem:", error);
@@ -31,8 +37,52 @@ function EstimateRideProvider({ children }: {children: React.ReactNode}) {
         setLoading(false);
       }
   }, [navigate]);
+
+  const confirmRideApi = useCallback(
+    async (driverId: number) => {
+      if (!estimateRide) {
+        setError("Nenhuma estimativa disponível para confirmar a viagem.");
+        return;
+      }
+      const selectedDriver = estimateRide.options.find((driver) => driver.id === driverId);
+
+      if (!selectedDriver) {
+        setError("Motorista selecionado não encontrado.");
+        return;
+      }
+
+      const requestBody = {
+        customer_id: customerId,
+        origin: originAddress,
+        destination: destinationAddress,
+        distance: estimateRide.distance,
+        duration: estimateRide.duration,
+        driver: {
+          id: selectedDriver.id,
+          name: selectedDriver.name,
+        },
+        value: selectedDriver.value,
+      };
+      try {
+        await shopperApi("PATCH", "/ride/confirm", requestBody);
+        alert("Viagem confirmada com sucesso!");
+        navigate("/historico");
+      } catch (error) {
+        console.error("Erro ao confirmar viagem:", error);
+        setError("Erro ao confirmar viagem. Tente novamente.");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [customerId, estimateRide, navigate]
+  )
   return (
-    <EstimateRideContext.Provider value={{ estimateRide, estimateRideApi, error, loading }}>
+    <EstimateRideContext.Provider value={{ 
+      estimateRide,
+      estimateRideApi,
+      confirmRideApi,
+      error,
+      loading }}>
       {children}
     </EstimateRideContext.Provider>
   );
