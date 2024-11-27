@@ -3,6 +3,8 @@ import { EstimateRideType } from "../types/EstimateRideType";
 import { useNavigate } from "react-router-dom";
 import shopperApi from "../utils/fetch";
 import EstimateRideContext from "./EstimateRideContext";
+import { RidesByCustomerType } from "../types/RidesByCustomerType";
+import { DriverType } from "../types/DriverType";
 
 function EstimateRideProvider({ children }: {children: React.ReactNode}) {
   const[estimateRide, setEstimateRide] = useState<EstimateRideType | null>(null);
@@ -11,6 +13,8 @@ function EstimateRideProvider({ children }: {children: React.ReactNode}) {
   const [destinationAddress, setDestinationAddress] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const  [ridesByCustomer, setRidesByCustomer] = useState<RidesByCustomerType| null>(null);
+  const [drivers, setDrivers] = useState<DriverType[]>([])
 
   const navigate = useNavigate();
   
@@ -76,11 +80,45 @@ function EstimateRideProvider({ children }: {children: React.ReactNode}) {
     },
     [customerId, estimateRide, navigate]
   )
+
+  const fetchRidesByCustomerApi = useCallback(
+    async (customerId: string, driverId: string | null = null) => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const endpoint = driverId
+          ? `/ride/${customerId}/${driverId}`
+          : `/ride/${customerId}`;
+        const response = await shopperApi("GET", endpoint);
+        setRidesByCustomer(response.data); 
+      } catch (err) {
+        console.error("Erro ao carregar histórico de viagens:", err);
+        setError("Erro ao carregar histórico de viagens. Tente novamente.");
+      } finally {
+        setLoading(false);
+      }
+    },
+    []
+  );
+
+  const getDrivers = useCallback(async () => {
+    try {
+      const response = await shopperApi("GET", "/drivers");
+      setDrivers(response.data);
+    } catch (err) {
+      console.error("Erro ao buscar motoristas:", err);
+    }
+  }, []);
   return (
     <EstimateRideContext.Provider value={{ 
       estimateRide,
       estimateRideApi,
       confirmRideApi,
+      ridesByCustomer,
+      fetchRidesByCustomerApi,
+      getDrivers,
+      drivers,
       error,
       loading }}>
       {children}
