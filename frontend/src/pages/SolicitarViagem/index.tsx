@@ -23,7 +23,7 @@ function SolicitarViagem() {
       setUserId(1); // Reseta os campos após a submissão
       setOriginAddress('');
       setDestinationAddress('');
-    } catch (err) {
+    } catch {
       setFormError("Erro ao solicitar a viagem. Tente novamente.");
     }
   };
