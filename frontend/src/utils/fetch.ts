@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const HOST = "localhost:3001";
+const HOST = "localhost:8080";
 const PROTOCOL = "http";
 
 const fetch = axios.create({
