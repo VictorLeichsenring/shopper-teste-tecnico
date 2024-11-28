@@ -5,6 +5,7 @@ import shopperApi from "../utils/fetch";
 import EstimateRideContext from "./EstimateRideContext";
 import { RidesByCustomerType } from "../types/RidesByCustomerType";
 import { DriverType } from "../types/DriverType";
+import showTemporaryAlert from "../utils/showTemporaryAlert";
 
 function EstimateRideProvider({ children }: {children: React.ReactNode}) {
   const[estimateRide, setEstimateRide] = useState<EstimateRideType | null>(null);
@@ -69,7 +70,7 @@ function EstimateRideProvider({ children }: {children: React.ReactNode}) {
       };
       try {
         await shopperApi("PATCH", "/ride/confirm", requestBody);
-        alert("Viagem confirmada com sucesso!");
+        showTemporaryAlert("Viagem confirmada com sucesso!");
         navigate("/historico");
       } catch (error) {
         console.error("Erro ao confirmar viagem:", error);
