@@ -1,0 +1,48 @@
+.driver-card-option {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: #3a3f45;
+  color: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  border: 2px solid #7289da; /* Moldura */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.driver-card-option:hover {
+  transform: translateY(-5px); /* Elevação no hover */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+.driver-card-header {
+  border-bottom: 1px solid #5a5f66;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+.driver-card-body {
+  flex: 1;
+}
+
+.driver-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+}
+
+.driver-card-option button {
+  padding: 10px 20px;
+  background-color: #7289da;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.driver-card-option button:hover {
+  background-color: #5a73c1;
+}
